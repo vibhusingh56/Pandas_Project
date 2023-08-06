@@ -1,0 +1,30 @@
+import pandas as pd
+import PyPDF2
+import re
+
+def extract_numbers_from_pdf(file_path):
+    numbers = []
+
+    # Open the PDF file in read-binary mode
+    with open(file_path, 'rb') as pdf_file:
+        pdf_reader = PyPDF2.PdfFileReader(pdf_file)
+
+        # Loop through each page of the PDF
+        for page_num in range(pdf_reader.numPages):
+            page = pdf_reader.getPage(page_num)
+            text = page.extract_text()
+
+            # Use regular expression to find all numbers in the page text
+            page_numbers = re.findall(r'\d+\.\d+|\d+', text)
+            numbers.extend(page_numbers)
+
+    # Convert the list of numbers into a Pandas DataFrame
+    df = pd.DataFrame(numbers, columns=["Numbers"])
+
+    return df
+
+if __name__ == "__main__":
+    pdf_file_path = "example.pdf"  # Replace with the path to your PDF file
+    df = extract_numbers_from_pdf(pdf_file_path)
+    print("Extracted Numbers Table:")
+    print(df)
